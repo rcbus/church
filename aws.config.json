@@ -1,0 +1,10 @@
+{
+    "read-me-1":"Variáveis de Ambiente AWS",
+    "read-me-2":"Renomeie esse aquivo para aws.config.js e mude as configurações abaixo.",
+    "read-me-3":"Apague todos os parametros read-me desse arquivo.",
+    "read-me-4":"conforme a sua infraestrutura está configurada. Reinicie o servidor.", 
+    
+    "accessKeyId": "266IKVQPEAKIATMVR5H3", 
+    "secretAccessKey": "CjESz+2p6RMHo3mxpvO4Q8VfPS8jeg2UWgeEdEsc", 
+    "region": "us-east-1" 
+}
