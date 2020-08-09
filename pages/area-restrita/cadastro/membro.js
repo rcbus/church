@@ -11,7 +11,7 @@ import { getListSelect } from '../../../libs/api'
 
 export default function membro() {
     const [title,setTitle] = useState("Membro :: Cadastro :: " + process.env.appName)
-    const [slide,setSlide] = useState(true)
+    const [slide,setSlide] = useState(false)
     const [formMembro,setFormMembro] = useState({_id:''})
     const [listMembro,setListMembro] = useState([])
     const [nextMembro,setNextMembro] = useState(false)
