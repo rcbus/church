@@ -26,7 +26,8 @@ export default function home() {
     <LayoutHeaderEditable protected={false} title={title} description={process.env.appName} appName={process.env.appName}>
       <Top className="layout-header-editable-item layout-header-editable-space-h form-row" />
       <div className="layout-header-editable-item layout-header-editable-space-m">
-        Bem Vindo
+        Bem Vindo<br/><br/>
+        <a href="area-restrita/home">Área Restrita</a>
       </div>
     </LayoutHeaderEditable>
   )

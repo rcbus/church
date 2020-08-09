@@ -11,7 +11,7 @@ module.exports = {
         dirname:'/home/cleiton/Documentos/www/church/',
         protocol: 'http',
         host: '192.168.1.99',
-        port: 3000,
+        port: 3100,
         dbHost: 'localhost',
         dbPort: 27017,
         dbName: 'church-app',
@@ -19,7 +19,7 @@ module.exports = {
         dbPass: 'ctc363320',
         protocolApi: 'http',
         hostApi: '192.168.1.99',
-        portApi: 3000,
+        portApi: 3100,
         tokenApi: 'church-api',
         storage: 'DB'
     }
