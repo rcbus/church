@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import Router from 'next/router'
 import LayoutHeaderEditable from '../../../components/layout-header-editable'
-import { setCols,getSession,setSession,verifyVariable } from '../../../libs/functions'
+import { setCols,getSession,setSession,verifyVariable,strlen } from '../../../libs/functions'
 import Top from '../../../components/top-login-version-home-logout'
 import Card from '../../../components/card'
 import CardImage from '../../../components/card-image'
 import Form,{formUpdate,formModify,formRegister} from '../../../components/form'
 import Dta from '../../../components/data-table-adapter'
+import { getListSelect } from '../../../libs/api'
 
 export default function membro() {
     const [title,setTitle] = useState("Membro :: Cadastro :: " + process.env.appName)
@@ -16,6 +17,29 @@ export default function membro() {
     const [nextMembro,setNextMembro] = useState(false)
     const [prevMembro,setPrevMembro] = useState(false)
     const [seeAllMembro,setSeeAllMembro] = useState(false)
+    const [listEstado,setListEstado] = useState([])
+    const [listCidade,setListCidade] = useState([])
+    const [ufAnterior,setUfAnterior] = useState(false)
+
+    useEffect(() => {
+        if(getSession("userData")!==false){
+            getListSelect('api/cadastro/estado',{value:'uf',text:'uf'},setListEstado)
+        }
+    },[])
+
+    useEffect(() => {
+        if(strlen(formMembro.uf1)>0){
+            if(formMembro.uf1!=ufAnterior){
+                setUfAnterior(formMembro.uf1)
+                if(getSession("userData")!==false){
+                    getListSelect('api/cadastro/cidade',{value:'_id',text:'name'},setListCidade,{status:1,uf:formMembro.uf1},true)
+                }
+            }
+        }else{
+            setListCidade([])
+            setUfAnterior(false)
+        }
+    },[formMembro])
 
     function modify(id,list){
         formModify(id,(list ? list : listMembro),setFormMembro,setListMembro,setNextMembro,setPrevMembro,true,setSlide,"Modificar :: Membro :: Cadastro :: " + process.env.appName,setTitle)
@@ -255,7 +279,7 @@ export default function membro() {
                                         ]}
                                     />
                                 </Card>
-                                {/*<Card title="Endereço Principal" margin="mt-4">
+                                <Card title="Endereço" margin="mt-4">
                                     <Form 
                                         collection='cadastro_membro'
                                         api='api/cadastro/membro'
@@ -263,39 +287,56 @@ export default function membro() {
                                         callbackUpdate={(form) => formUpdate(form,listMembro,setFormMembro,setListMembro)}
                                         callbackSetForm={setFormMembro}
                                         withoutMargin={true}
-                                        msg={{u:{confirm:'',success:'Endereço principal salvo com sucesso!'}}}
+                                        msg={{u:{confirm:'',success:'Endereço salvo com sucesso!'}}}
                                         content={[
                                             {
                                                 label:(<>CEP</>),
-                                                cols:setCols(12,6,4,3,2),
+                                                cols:setCols(12,4,3,3,2),
                                                 name:'cep1',
-                                                type:'text'
+                                                type:'text',
+                                                className:'text-center'
                                             },
                                             {
                                                 label:(<>Endereço</>),
-                                                cols:setCols(12,6,4,3,2),
+                                                cols:setCols(12,8,7,7,5),
                                                 name:'address1',
                                                 type:'text'
                                             },
                                             {
                                                 label:(<>Nº <i>(opcional)</i></>),
-                                                cols:setCols(12,6,4,3,2),
+                                                cols:setCols(12,4,2,2,2),
                                                 name:'number1',
                                                 type:'text',
                                                 className:'text-center'
                                             },
                                             {
                                                 label:(<>Complemento <i>(opcional)</i></>),
-                                                cols:setCols(12,6,4,3,2),
+                                                cols:setCols(12,8,5,5,3),
                                                 name:'complement1',
                                                 type:'text',
                                                 className:'text-center'
                                             },
                                             {
                                                 label:(<>Bairro</>),
-                                                cols:setCols(12,6,4,3,2),
-                                                name:'neighborhood',
+                                                cols:setCols(12,12,7,7,5),
+                                                name:'neighborhood1',
                                                 type:'text'
+                                            },
+                                            {
+                                                label:(<>UF</>),
+                                                cols:setCols(12,12,7,7,1),
+                                                name:'uf1',
+                                                type:'select',
+                                                optionNull:true,
+                                                data:listEstado
+                                            },
+                                            {
+                                                label:(<>Cidade</>),
+                                                cols:setCols(12,12,7,7,6),
+                                                name:'city1',
+                                                type:'select',
+                                                optionNull:(verifyVariable(formMembro.uf1) ? (strlen(formMembro.uf1) > 0 ? 'ESCOLHA UMA CIDADE' : 'ESCOLHA UM ESTADO') : 'ESCOLHA UM ESTADO'),
+                                                data:listCidade
                                             }
                                         ]}
                                         button={[
@@ -304,11 +345,11 @@ export default function membro() {
                                                 type:'button',
                                                 className:'btn-lg btn-success btn-block mt-3',
                                                 name:'save',
-                                                innerHTML:'Salvar Endereço Principal'
+                                                innerHTML:'Salvar Endereço'
                                             }
                                         ]}
                                     />
-                                </Card>*/}
+                                </Card>
                             </>
                         ):null}
                     </>
