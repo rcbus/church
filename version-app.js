@@ -1,4 +1,4 @@
-const version = '1.0.1'
+const version = '1.0.2'
 
 export default function Version({align}) {
   return (
@@ -11,6 +11,7 @@ export default function Version({align}) {
 /*
 Histórico de versões
 
+09/08/2020 AS 00:33:21 - 1.0.2 - BRANCH: update_cleiton_20200808_222522
 08/08/2020 AS 22:21:27 - 1.0.1 - BRANCH: update_cleiton_20200808_220619
 1.0.0 - 27/07/2020
 */
