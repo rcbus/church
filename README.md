@@ -6,7 +6,7 @@ Sistema de cadastro para igrejas, totalmente gratuito. O projeto foi iniciado em
 
 ## Sobre o Projeto
 
-Esse projeto nasceu de uma necessidade de trazer mais tecnologia, gestão e organização para as igrejas. Certa vez percebi que de tempo em tempo eu e os demais membros da igreja que frequento tinhamos que preencher uma fichinha a mão, as vezes para atualizar as informações e as vezes porque realmente as informações foram perdidas por algum motivo. Assim sendo decidi criar essa aplicação para garantir que as informações não se percam, estejam disponíveis de qualquer lugar do mundo e acessível de qualquer dispositivo com acesso a internet atravez de um browser. E é claro que a motivação desse projeto é Deus, que é amor da minha vida e supridor de todas as coisas e por isso faço isso com amor e dedicação.<br><br>
+Esse projeto nasceu de uma necessidade de trazer mais tecnologia, gestão e organização para as igrejas. Certa vez percebi que de tempo em tempo eu e os demais membros da igreja que frequento tinhamos que preencher uma fichinha a mão, as vezes para atualizar as informações e as vezes porque realmente as informações foram perdidas por algum motivo. Assim sendo decidi criar essa aplicação para garantir que as informações não se percam, estejam disponíveis de qualquer lugar do mundo e acessível de qualquer dispositivo com acesso a internet atravez de um browser. E é claro que a motivação desse projeto é Deus, que é o amor da minha vida e supridor de todas as coisas e por isso faço isso com amor e dedicação.<br><br>
 
 Em breve iremos disponibilizar o sistema em um servidor on-line totalmente gratuito.
 
