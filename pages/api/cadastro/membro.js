@@ -22,6 +22,17 @@ export default async (req, res) => {
                 data.cellphone = clearNumber(data.cellphone)
                 data.phone1 = clearNumber(data.phone1)  
 
+                data.cep1 = clearNumber(data.cep1)
+                data.address1 = clearString(data.address1)
+                data.address1 = strupper(data.address1)
+                data.number1 = clearString(data.number1)
+                data.number1 = strupper(data.number1)
+                data.complement1 = clearString(data.complement1)
+                data.complement1 = strupper(data.complement1)
+                data.neighborhood1 = clearString(data.neighborhood1)
+                data.neighborhood1 = strupper(data.neighborhood1)
+                
+
                 var fullName = true
 
                 var nameArray = data.name.split(' ')
@@ -65,6 +76,7 @@ export default async (req, res) => {
                     {column:'rgIe',callback:formatRgIe},
                     {column:'cellphone',callback:formatPhone},
                     {column:'phone1',callback:formatPhone},
+                    {column:'cep1',callback:formatCep},
                 ]
 
                 crudab(req, res,resolve,reject,'cadastro_membro',verify,'Já existe um membro com esses dados!',data,{name:1},undefined,processing)
