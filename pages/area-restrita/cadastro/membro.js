@@ -7,12 +7,13 @@ import Card from '../../../components/card'
 import CardImage from '../../../components/card-image'
 import Form,{formUpdate,formModify,formRegister} from '../../../components/form'
 import Dta from '../../../components/data-table-adapter'
-import { getListSelect } from '../../../libs/api'
+import { getListSelect,getListData } from '../../../libs/api'
+import Address from '../../../components/address'
 
 export default function membro() {
     const [title,setTitle] = useState("Membro :: Cadastro :: " + process.env.appName)
     const [slide,setSlide] = useState(false)
-    const [formMembro,setFormMembro] = useState({_id:''})
+    const [formMembro,setFormMembro] = useState({_id:'',status:''})
     const [listMembro,setListMembro] = useState([])
     const [nextMembro,setNextMembro] = useState(false)
     const [prevMembro,setPrevMembro] = useState(false)
@@ -20,6 +21,13 @@ export default function membro() {
     const [listEstado,setListEstado] = useState([])
     const [listCidade,setListCidade] = useState([])
     const [ufAnterior,setUfAnterior] = useState(false)
+
+    const [slideMembroHistorico,setSlideMembroHistorico] = useState(false)
+    const [formMembroHistorico,setFormMembroHistorico] = useState({_id:'',status:''})
+    const [listMembroHistorico,setListMembroHistorico] = useState([])
+    const [configMembroHistorico,setConfigMembroHistorico] = useState([])
+    const [nextMembroHistorico,setNextMembroHistorico] = useState(false)
+    const [prevMembroHistorico,setPrevMembroHistorico] = useState(false)
 
     useEffect(() => {
         if(getSession("userData")!==false){
@@ -32,7 +40,7 @@ export default function membro() {
             if(formMembro.uf1!=ufAnterior){
                 setUfAnterior(formMembro.uf1)
                 if(getSession("userData")!==false){
-                    getListSelect('api/cadastro/cidade',{value:'_id',text:'name'},setListCidade,{status:1,uf:formMembro.uf1},true)
+                    getListSelect('api/cadastro/cidade',{value:'_id',text:'name'},setListCidade,{status:1,uf:formMembro.uf1})
                 }
             }
         }else{
@@ -41,14 +49,43 @@ export default function membro() {
         }
     },[formMembro])
 
+    useEffect(() => {
+        if(getSession("userData")!==false){
+            getListData('api/cadastro/membro_historico','cadastro_membro_historico',configMembroHistorico,setListMembroHistorico,setConfigMembroHistorico,formMembro._id)
+        }
+    },[formMembro,formMembroHistorico])
+
     function modify(id,list){
         formModify(id,(list ? list : listMembro),setFormMembro,setListMembro,setNextMembro,setPrevMembro,true,setSlide,"Modificar :: Membro :: Cadastro :: " + process.env.appName,setTitle)
+    }
+
+    function modifyMembroHistorico(id,list){
+        setSlideMembroHistorico(true)
+        formModify(id,(list ? list : listMembroHistorico),setFormMembroHistorico,setListMembroHistorico,setNextMembroHistorico,setPrevMembroHistorico)
     }
 
     function register(){
         setNextMembro(false)
         setPrevMembro(false)
-        formRegister(true,setSlide,{_id:''},setFormMembro,"Cadastrar :: Membro :: Cadastro :: " + process.env.appName,setTitle)
+        formRegister(true,setSlide,{_id:'',status:''},setFormMembro,"Cadastrar :: Membro :: Cadastro :: " + process.env.appName,setTitle)
+    }
+
+    function registerMembroHistorico(){
+        setNextMembroHistorico(false)
+        setPrevMembroHistorico(false)
+        formRegister(true,setSlide,{_id:'',status:''},setFormMembroHistorico)
+        setSlideMembroHistorico(true)
+    }
+
+    function updateMembroHistorico(form){
+        formUpdate(form,listMembroHistorico,setFormMembroHistorico,setListMembroHistorico)
+        registerMembroHistorico()
+        setSlideMembroHistorico(false)
+    }
+
+    function cancelMembroHistorico(){
+        formRegister(true,setSlide,{_id:'',status:''},setFormMembroHistorico)
+        setSlideMembroHistorico(false)
     }
 
     return (
@@ -138,18 +175,29 @@ export default function membro() {
                                                 name:'name'
                                             },
                                             {
-                                                cols:setCols(12,6,6,6,5),
+                                                cols:setCols(12,4,6,4,4),
                                                 label:'CPF',
                                                 type:'text',
                                                 name:'cpfCnpj',
                                                 className:'text-center'
                                             },
                                             {
-                                                cols:setCols(12,6,6,6,5),
+                                                cols:setCols(12,4,6,4,4),
                                                 label:(<>RG <i>(opcional)</i></>),
                                                 type:'text',
                                                 name:'rgIe',
                                                 className:'text-center'
+                                            },
+                                            {
+                                                cols:setCols(12,4,12,4,4),
+                                                label:(<>Sexo</>),
+                                                type:'select',
+                                                name:'gender',
+                                                optionNull:true,
+                                                data:[
+                                                    {value:'0',text:'FEMININO'},
+                                                    {value:'1',text:'MASCULINO'},
+                                                ]
                                             }
                                         ]}
                                         button={[
@@ -198,7 +246,7 @@ export default function membro() {
                         </Card>
                         {verifyVariable(formMembro.status) ? (
                             <>
-                                <Card title="Observação" margin="mt-4">
+                                <Card title="Observação" margin="mt-4" show={false}>
                                     <Form 
                                         collection='cadastro_membro'
                                         api='api/cadastro/membro'
@@ -225,7 +273,7 @@ export default function membro() {
                                         ]}
                                     />
                                 </Card>
-                                <Card title="Contato" margin="mt-4">
+                                <Card title="Contato" margin="mt-4" show={false}>
                                     <Form 
                                         collection='cadastro_membro'
                                         api='api/cadastro/membro'
@@ -279,77 +327,129 @@ export default function membro() {
                                         ]}
                                     />
                                 </Card>
-                                <Card title="Endereço" margin="mt-4">
-                                    <Form 
+                                <Card title="Endereço" margin="mt-4" show={false}>
+                                    <Address 
+                                        type={1}
                                         collection='cadastro_membro'
                                         api='api/cadastro/membro'
                                         data={formMembro}
+                                        list={listMembro}
+                                        callbackSetList={setListMembro}
                                         callbackUpdate={(form) => formUpdate(form,listMembro,setFormMembro,setListMembro)}
                                         callbackSetForm={setFormMembro}
                                         withoutMargin={true}
                                         msg={{u:{confirm:'',success:'Endereço salvo com sucesso!'}}}
+                                    />
+                                </Card>   
+                                <Card title="Histórico Eclesiástico" margin="mt-4">
+                                    <Form 
+                                        slide={slideMembroHistorico}
+                                        api='api/cadastro/membro_historico'
+                                        data={formMembroHistorico}
+                                        withoutMargin={true}
+                                        idRef={formMembro._id}
+                                        msg={{
+                                            c:{confirm:'',success:'Acontecimento salvo com sucesso!'},
+                                            u:{confirm:'',success:'Acontecimento alterado com sucesso!'},
+                                            d:{confirm:'Deseja excluir esse acontecimento?',success:'Acontecimento excluído com sucesso!'}
+                                        }}
+                                        next={nextMembroHistorico}
+                                        prev={prevMembroHistorico}
+                                        callbackSetForm={setFormMembroHistorico}
+                                        callbackUpdate={(form) => updateMembroHistorico(form)}
+                                        callbackNext={modifyMembroHistorico}
+                                        callbackPrev={modifyMembroHistorico}
                                         content={[
                                             {
-                                                label:(<>CEP</>),
-                                                cols:setCols(12,4,3,3,2),
-                                                name:'cep1',
-                                                type:'text',
+                                                cols:setCols(12,6,4,3,2),
+                                                label:'ID',
+                                                type:'_id',
+                                                name:'_id'
+                                            },
+                                            {
+                                                cols:setCols(12,6,4,3,2),
+                                                label:'Status',
+                                                type:'status',
+                                                name:'status',
+                                                mask:{'':'CADASTRO','1':'ATIVO','0':'DESATIVADO'},
+                                                className:{'':'stdSilver','1':'stdGreen','0':'stdRed'}
+                                            },
+                                            {
+                                                cols:setCols(12,6,4,3,2),
+                                                label:'Data Acontecimento',
+                                                type:'date',
+                                                name:'eventDate',
                                                 className:'text-center'
                                             },
                                             {
-                                                label:(<>Endereço</>),
-                                                cols:setCols(12,8,7,7,5),
-                                                name:'address1',
-                                                type:'text'
-                                            },
-                                            {
-                                                label:(<>Nº <i>(opcional)</i></>),
-                                                cols:setCols(12,4,2,2,2),
-                                                name:'number1',
-                                                type:'text',
-                                                className:'text-center'
-                                            },
-                                            {
-                                                label:(<>Complemento <i>(opcional)</i></>),
-                                                cols:setCols(12,8,5,5,3),
-                                                name:'complement1',
-                                                type:'text',
-                                                className:'text-center'
-                                            },
-                                            {
-                                                label:(<>Bairro</>),
-                                                cols:setCols(12,12,7,7,5),
-                                                name:'neighborhood1',
-                                                type:'text'
-                                            },
-                                            {
-                                                label:(<>UF</>),
-                                                cols:setCols(12,12,7,7,1),
-                                                name:'uf1',
+                                                cols:setCols(12,6,6,6,6),
+                                                label:(<>Acontecimento</>),
                                                 type:'select',
+                                                name:'event',
                                                 optionNull:true,
-                                                data:listEstado
+                                                data:[
+                                                    {value:'0',text:'BASTIMO'},
+                                                    {value:'1',text:'CASAMENTO'},
+                                                    {value:'2',text:'RECEBIMENTO COMO MEMBRO'},
+                                                    {value:'3',text:'ASSUMIU O CARGO'},
+                                                    {value:'4',text:'ENTREGOU O CARGO'},
+                                                    {value:'5',text:'PARTICIPOU DE PALESTRA, WORKSHOP OU EVENTO'},
+                                                    {value:'6',text:'SAIU DA IGREJA'}
+                                                ]
                                             },
                                             {
-                                                label:(<>Cidade</>),
-                                                cols:setCols(12,12,7,7,6),
-                                                name:'city1',
-                                                type:'select',
-                                                optionNull:(verifyVariable(formMembro.uf1) ? (strlen(formMembro.uf1) > 0 ? 'ESCOLHA UMA CIDADE' : 'ESCOLHA UM ESTADO') : 'ESCOLHA UM ESTADO'),
-                                                data:listCidade
+                                                cols:setCols(12,12,6,6,12),
+                                                label:'Detalhe',
+                                                type:'text',
+                                                name:'detail' 
                                             }
                                         ]}
                                         button={[
                                             {
-                                                cols:setCols(12,6,5,4,3),
+                                                cols:setCols(12,(formMembro.status==null ? 12 : 6),(formMembro.status==null ? 12 : 6),3,2),
                                                 type:'button',
-                                                className:'btn-lg btn-success btn-block mt-3',
+                                                className:'btn-lg btn-success btn-block mt-2',
                                                 name:'save',
-                                                innerHTML:'Salvar Endereço'
+                                                innerHTML:'Salvar'
+                                            },
+                                            {
+                                                cols:setCols(12,6,6,3,2),
+                                                type:'button',
+                                                className:'btn-lg btn-warning btn-block mt-2',
+                                                name:'cancel',
+                                                innerHTML:'Cancelar',
+                                                callback:cancelMembroHistorico
+                                            },
+                                            {
+                                                cols:setCols(12,6,6,3,3),
+                                                type:'button',
+                                                className:'btn-lg btn-danger btn-block mt-2',
+                                                name:'desactive',
+                                                innerHTML:'Excluir',
+                                                where:[{'status':'1'}]
+                                            },
+                                            {
+                                                cols:setCols(12,6,6,3,3),
+                                                type:'button',
+                                                className:'btn-lg btn-primary btn-block mt-2',
+                                                name:'register',
+                                                innerHTML:'+ Cadastrar',
+                                                callback:registerMembroHistorico
                                             }
                                         ]}
                                     />
-                                </Card>
+
+                                    <Dta
+                                        idRef={formMembro._id}
+                                        title="Lista de Acontecimentos"
+                                        margin='mt-3' 
+                                        data={listMembroHistorico}
+                                        config={configMembroHistorico}
+                                        collection='cadastro_membro_historico'
+                                        editable={getSession("userData").type=='admin' ? true : false}
+                                        callbackClickCell={modifyMembroHistorico}
+                                    />
+                                </Card>                             
                             </>
                         ):null}
                     </>
